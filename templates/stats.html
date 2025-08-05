@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Statistics - Court Data Fetcher</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>Query Statistics</h1>
+    
+    <div style="margin: 20px 0;">
+        <h2>Overall Statistics</h2>
+        <table border="1" cellpadding="5" cellspacing="0">
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Total Queries</td>
+                <td>{{ stats.total_queries }}</td>
+            </tr>
+            <tr>
+                <td>Successful Queries</td>
+                <td style="color: green;">{{ stats.successful_queries }}</td>
+            </tr>
+            <tr>
+                <td>Failed Queries</td>
+                <td style="color: red;">{{ stats.failed_queries }}</td>
+            </tr>
+            <tr>
+                <td>Success Rate</td>
+                <td style="color: {% if stats.success_rate >= 80 %}green{% elif stats.success_rate >= 60 %}orange{% else %}red{% endif %};">
+                    {{ "%.1f"|format(stats.success_rate) }}%
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <div style="margin: 20px 0;">
+        <h2>Most Popular Case Types</h2>
+        <table border="1" cellpadding="5" cellspacing="0">
+            <tr>
+                <th>Case Type</th>
+                <th>Count</th>
+            </tr>
+            {% for case_type, count in stats.top_case_types %}
+            <tr>
+                <td>{{ case_type }}</td>
+                <td>{{ count }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    
+    <br>
+    <a href="/">Back to Search</a> | 
+    <a href="/history">View History</a>
+</body>
+</html> 

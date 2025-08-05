@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Case Results</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .results-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .results-table th {
+            background-color: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: bold;
+        }
+        .results-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: top;
+        }
+        .results-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #007bff;
+            background-color: white;
+            color: #007bff;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .pagination button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .pagination button.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .pagination button:disabled {
+            background-color: #6c757d;
+            color: white;
+            cursor: not-allowed;
+        }
+        .result-count {
+            text-align: center;
+            margin: 10px 0;
+            color: #6c757d;
+        }
+        .download-section {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            padding: 20px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .loading-text {
+            color: white;
+            margin-top: 15px;
+            font-size: 16px;
+            text-align: center;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-content {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="results-container">
+        <h1>Case Results</h1>
+        
+        {% if error %}
+            <div class="error-message">
+                <p>{{ error }}</p>
+            </div>
+        {% else %}
+            {% if data.total_count %}
+                <div class="result-count">
+                    Found {{ data.total_count }} result(s)
+                </div>
+            {% endif %}
+            
+            {% if data.results %}
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Case No.</th>
+                            <th>Date of Judgment/Order</th>
+                            <th>Party</th>
+                            <th>Corrigendum</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                        {% for result in data.results %}
+                        <tr class="result-row" style="display: {% if loop.index <= 5 %}table-row{% else %}none{% endif %};">
+                            <td>{{ result.sno }}</td>
+                            <td>
+                                {{ result.case_no }}<br>
+                                {% if result.case_no_link %}
+                                    <a href="{{ result.case_no_link }}" target="_blank" style="color: #007bff;">View Details</a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ result.date }}<br>
+                                {% if result.date_link %}
+                                    <a href="{{ result.date_link }}" target="_blank" style="color: #007bff;">View Order</a>
+                                {% endif %}
+                            </td>
+                            <td style="white-space: pre-line;">{{ result.party }}</td>
+                            <td>{{ result.corrigendum }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                {% if data.results|length > 5 %}
+                <div class="pagination">
+                    <button onclick="showPage(1)" class="active">1</button>
+                    {% for page in range(2, ((data.results|length - 1) // 5) + 2) %}
+                        <button onclick="showPage({{ page }})">{{ page }}</button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if data.first_result.pdf %}
+                <div class="download-section">
+                    <p><strong>Download Case Information as PDF:</strong></p>
+                    <a href="/download/{{ data.first_result.pdf }}" style="
+                        display: inline-block;
+                        padding: 10px 20px;
+                        background-color: #28a745;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        margin: 10px;
+                    ">Download PDF Report</a>
+                </div>
+                {% endif %}
+            {% else %}
+                <p style="text-align: center; color: #6c757d;">No results found for the given criteria.</p>
+            {% endif %}
+        {% endif %}
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/" style="
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+            ">Back to Search</a>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">
+                🔄 Loading...<br>
+                <small>Please wait</small>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showPage(pageNum) {
+            const rows = document.querySelectorAll('.result-row');
+            const itemsPerPage = 5;
+            const startIndex = (pageNum - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            
+            // Hide all rows
+            rows.forEach(row => row.style.display = 'none');
+            
+            // Show rows for current page
+            for (let i = startIndex; i < endIndex && i < rows.length; i++) {
+                rows[i].style.display = 'table-row';
+            }
+            
+            // Update pagination buttons
+            const buttons = document.querySelectorAll('.pagination button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        // Show loading animation when navigating back
+        document.querySelector('a[href="/"]').addEventListener('click', function(e) {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
