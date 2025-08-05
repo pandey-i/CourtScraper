@@ -2,19 +2,23 @@
 
 A powerful web application for scraping and displaying court case information from the Delhi High Court website. Built with Python, Flask, Selenium, and modern web technologies.
 
+![Court Data Fetcher](https://img.shields.io/badge/Python-3.11+-blue.svg)
+![Flask](https://img.shields.io/badge/Flask-2.0.1-green.svg)
+![Selenium](https://img.shields.io/badge/Selenium-4.8.0-orange.svg)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 ## 📋 Table of Contents
 
 - [Features](#-features)
-- [Screenshots](#-screenshots)
+- [Live Demo](#-live-demo)
+- [Quick Start](#-quick-start)
 - [Installation](#-installation)
 - [Usage](#-usage)
 - [API Documentation](#-api-documentation)
-- [Technical Architecture](#-technical-architecture)
-- [Database Schema](#-database-schema)
-- [Testing](#-testing)
 - [Deployment](#-deployment)
-- [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
+- [License](#-license)
 
 ## ✨ Features
 
@@ -45,67 +49,49 @@ A powerful web application for scraping and displaying court case information fr
 - **Docker Support** - Containerized deployment for consistency
 - **Unit Testing** - Automated testing for core functionality
 
-## 📸 Screenshots
+## 🌐 Live Demo
 
-### Main Search Interface
-![Search Interface](docs/images/search-interface.png)
+**Deploy your own instance:**
+- **Railway**: [railway.app](https://railway.app) - Free tier available
+- **Render**: [render.com](https://render.com) - Free tier available
+- **DigitalOcean**: [digitalocean.com](https://digitalocean.com) - Production ready
 
-### Results Display
-![Results Display](docs/images/results-display.png)
+## 🚀 Quick Start
 
-### Query History
-![Query History](docs/images/query-history.png)
+### Option 1: Docker (Recommended)
 
-## 🚀 Installation
+```bash
+# Clone the repository
+git clone https://github.com/pandey-i/CourtScraper.git
+cd CourtScraper
 
-### Prerequisites
-- Python 3.11+
-- Chrome Browser
-- ChromeDriver (version 138.0.7204.184)
+# Build and run with Docker
+docker build -t court-scraper .
+docker run -p 5000:5000 court-scraper
 
-### Option 1: Local Installation
+# Access at http://localhost:5000
+```
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/court-scraper.git
-   cd court-scraper
-   ```
+### Option 2: Local Installation
 
-2. **Create virtual environment**
-   ```bash
-   python -m venv venv
-   # On Windows
-   .\venv\Scripts\Activate.ps1
-   # On Linux/Mac
-   source venv/bin/activate
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/pandey-i/CourtScraper.git
+cd CourtScraper
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: .\venv\Scripts\Activate.ps1
 
-4. **Download ChromeDriver**
-   - Download from: https://chromedriver.chromium.org/
-   - Extract `chromedriver.exe` to project root
-   - Ensure version matches your Chrome browser
+# Install dependencies
+pip install -r requirements.txt
 
-5. **Run the application**
-   ```bash
-   python app.py
-   ```
+# Download ChromeDriver (matching your Chrome version)
+# Download from: https://chromedriver.chromium.org/
 
-### Option 2: Docker Installation
-
-1. **Build the Docker image**
-   ```bash
-   docker build -t court-scraper .
-   ```
-
-2. **Run the container**
-   ```bash
-   docker run -p 5000:5000 court-scraper
-   ```
+# Run the application
+python app.py
+```
 
 ## 📖 Usage
 
@@ -163,7 +149,59 @@ The application displays:
 - **Description**: View search statistics
 - **Response**: HTML page with analytics
 
-## 🏗️ Technical Architecture
+#### `GET /health`
+- **Description**: Health check endpoint
+- **Response**: JSON with service status
+
+## 🚀 Deployment
+
+### Railway (Recommended - Free)
+
+1. **Sign up** at [railway.app](https://railway.app)
+2. **Connect GitHub** repository
+3. **Deploy automatically** - Railway detects Dockerfile
+4. **Get live URL** instantly
+
+### Render (Free Tier)
+
+1. **Sign up** at [render.com](https://render.com)
+2. **Connect GitHub** repository
+3. **Create Web Service**
+4. **Deploy with Docker**
+
+### DigitalOcean App Platform
+
+1. **Sign up** at [digitalocean.com](https://digitalocean.com)
+2. **Create App** from GitHub
+3. **Configure environment**
+4. **Deploy with SSL**
+
+### Local Production
+
+```bash
+# Set environment variables
+export FLASK_ENV=production
+export FLASK_APP=app.py
+
+# Run with Gunicorn
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:5000 app:app
+```
+
+## 🏗️ Architecture
+
+### Technology Stack
+
+| Component | Technology | Version | Purpose |
+|-----------|------------|---------|---------|
+| Backend Framework | Flask | 2.0.1 | Web application framework |
+| Web Scraping | Selenium | 4.8.0 | Browser automation |
+| Database | SQLite3 | Built-in | Data persistence |
+| PDF Generation | FPDF2 | Latest | Document creation |
+| CAPTCHA Solving | SpeechRecognition, pytesseract | Latest | Anti-bot bypass |
+| Frontend | HTML5, CSS3, JavaScript | - | User interface |
+| Template Engine | Jinja2 | Built-in | Dynamic HTML generation |
+| Containerization | Docker | Latest | Deployment consistency |
 
 ### System Components
 
@@ -179,77 +217,6 @@ The application displays:
                        │  (database.py)  │
                        └─────────────────┘
 ```
-
-### Key Technologies
-
-- **Backend**: Python 3.11, Flask 2.0.1
-- **Web Scraping**: Selenium 4.8.0, Chrome WebDriver
-- **Database**: SQLite3 (built-in)
-- **PDF Generation**: FPDF2
-- **CAPTCHA Solving**: SpeechRecognition, pytesseract, PIL
-- **Frontend**: HTML5, CSS3, JavaScript, Jinja2 templates
-
-### CAPTCHA Solving Methods
-
-1. **Direct Extraction** (Primary)
-   - Extracts CAPTCHA from `<span id="captcha-code">`
-   - Most reliable for Delhi High Court site
-
-2. **Audio Recognition** (Fallback)
-   - Uses SpeechRecognition library
-   - Converts audio CAPTCHA to text
-
-3. **OCR Processing** (Fallback)
-   - Uses pytesseract for image CAPTCHA
-   - Processes CAPTCHA images with OCR
-
-4. **Manual Solving** (Last Resort)
-   - Opens browser for manual CAPTCHA entry
-   - Used when automatic methods fail
-
-## 🗄️ Database Schema
-
-### Tables
-
-#### `queries` Table
-```sql
-CREATE TABLE queries (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    case_type TEXT NOT NULL,
-    case_number TEXT NOT NULL,
-    filing_year TEXT NOT NULL,
-    query_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status TEXT DEFAULT 'pending',
-    error_message TEXT
-);
-```
-
-#### `responses` Table
-```sql
-CREATE TABLE responses (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    query_id INTEGER,
-    sno TEXT,
-    case_no TEXT,
-    case_no_link TEXT,
-    date TEXT,
-    date_link TEXT,
-    party TEXT,
-    corrigendum TEXT,
-    pdf_filename TEXT,
-    raw_response TEXT,
-    response_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (query_id) REFERENCES queries (id)
-);
-```
-
-### Database Operations
-
-- **Query Logging**: `log_query(case_type, case_number, filing_year)`
-- **Status Updates**: `update_query_status(query_id, status, error_message)`
-- **Response Logging**: `log_response(query_id, result_data, raw_response)`
-- **History Retrieval**: `get_query_history(limit=10)`
-- **Statistics**: `get_query_stats()`
 
 ## 🧪 Testing
 
@@ -273,112 +240,62 @@ python -m pytest tests/test_scraper.py -v
 - **Database Operations**: Tests query logging and retrieval
 - **Case Types**: Validates dropdown options from court website
 
-### Test Structure
+## 📁 Project Structure
 
 ```
-tests/
-├── test_scraper.py      # Core scraping functionality
-├── test_database.py     # Database operations
-└── test_integration.py  # End-to-end tests
+CourtScraper/
+├── app.py                      # Flask application entry point
+├── scraper.py                  # Core web scraping logic
+├── database.py                 # Database operations
+├── requirements.txt            # Python dependencies
+├── Dockerfile                  # Docker container definition
+├── railway.json               # Railway deployment config
+├── deploy.sh                  # Deployment script
+├── .github/workflows/         # CI/CD pipeline
+│   └── ci.yml
+├── tests/                     # Unit tests
+│   └── test_scraper.py
+├── templates/                 # HTML templates
+│   ├── index.html
+│   ├── results.html
+│   ├── history.html
+│   └── stats.html
+├── static/                    # Static assets
+│   ├── css/
+│   └── downloads/            # Generated PDFs
+└── docs/                     # Documentation
+    ├── TECHNICAL_DOCUMENTATION.md
+    ├── QUICK_START.md
+    ├── LIVE_DEPLOYMENT.md
+    └── DEPLOYMENT.md
 ```
 
-## 🚀 Deployment
+## 🔒 Security & Ethics
 
-### Production Deployment
+### CAPTCHA Solving Methods
 
-1. **Environment Setup**
-   ```bash
-   export FLASK_ENV=production
-   export FLASK_APP=app.py
-   ```
+1. **Direct Extraction** (Primary)
+   - Extracts CAPTCHA from `<span id="captcha-code">`
+   - Most reliable for Delhi High Court site
 
-2. **Database Initialization**
-   ```bash
-   python -c "from database import init_database; init_database()"
-   ```
+2. **Audio Recognition** (Fallback)
+   - Uses SpeechRecognition library
+   - Converts audio CAPTCHA to text
 
-3. **ChromeDriver Setup**
-   ```bash
-   # Ensure ChromeDriver is in PATH or project directory
-   chmod +x chromedriver
-   ```
+3. **OCR Processing** (Fallback)
+   - Uses pytesseract for image CAPTCHA
+   - Processes CAPTCHA images with OCR
 
-4. **Run with Gunicorn**
-   ```bash
-   pip install gunicorn
-   gunicorn -w 4 -b 0.0.0.0:5000 app:app
-   ```
+4. **Manual Solving** (Last Resort)
+   - Opens browser for manual CAPTCHA entry
+   - Used when automatic methods fail
 
-### Docker Deployment
+### Ethical Considerations
 
-```bash
-# Build image
-docker build -t court-scraper .
-
-# Run container
-docker run -d -p 5000:5000 --name court-scraper-app court-scraper
-
-# View logs
-docker logs court-scraper-app
-```
-
-### CI/CD Pipeline
-
-The project includes GitHub Actions workflow (`.github/workflows/ci.yml`) that:
-- Runs automated tests
-- Performs code linting
-- Conducts security checks
-- Builds Docker images
-- Uploads coverage reports
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### ChromeDriver Issues
-```bash
-# Error: chromedriver executable needs to be in PATH
-# Solution: Download correct version and place in project root
-wget https://chromedriver.storage.googleapis.com/138.0.7204.184/chromedriver_win32.zip
-```
-
-#### CAPTCHA Solving Failures
-```bash
-# Error: CAPTCHA solving failed
-# Solution: Check internet connection and try manual solving
-```
-
-#### Database Errors
-```bash
-# Error: database is locked
-# Solution: Ensure no other processes are accessing the database
-```
-
-#### Flask Import Errors
-```bash
-# Error: cannot import name 'url_quote' from 'werkzeug.urls'
-# Solution: Install compatible werkzeug version
-pip install "werkzeug<2.1.0"
-```
-
-### Debug Mode
-
-Enable debug mode for detailed error information:
-```python
-# In app.py
-app.run(debug=True)
-```
-
-### Log Files
-
-Check application logs for detailed error information:
-```bash
-# View Flask logs
-tail -f flask.log
-
-# View Selenium logs
-tail -f selenium.log
-```
+- **Respectful Scraping**: Reasonable request rates
+- **Legal Compliance**: Follow website terms of service
+- **Transparency**: Clear logging of automated actions
+- **Educational Purpose**: For legal research and education
 
 ## 🤝 Contributing
 
@@ -425,9 +342,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For issues and questions:
 - Create an issue on GitHub
-- Check the troubleshooting section
-- Review the documentation
+- Check the troubleshooting section in documentation
+- Review the technical documentation for implementation details
 
 ---
 
 **Built with ❤️ for legal professionals and researchers**
+
+**Happy Scraping! 🏛️**
